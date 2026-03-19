@@ -3,98 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WYR OLYMPICS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>WYR OLYMPICS | NEON EDITION</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Syncopate:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --cyan: #00f2ff; --pink: #ff00e5; 
-            --bg: #050508; --card-bg: rgba(20, 20, 25, 0.7);
+            --cyan: #00f2ff; 
+            --pink: #ff00e5; 
+            --gold: #ffbd39;
+            --bg: #030305; 
+            --card-bg: rgba(15, 15, 20, 0.8);
+            --border: rgba(0, 242, 255, 0.3);
+            --glow: 0 0 15px rgba(0, 242, 255, 0.4);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            font-family: 'Poppins', sans-serif; background: var(--bg); color: white; 
-            overflow-x: hidden; min-height: 100vh; padding-top: 80px; padding-bottom: 90px;
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: white; 
+            overflow-x: hidden; 
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(255, 0, 229, 0.1) 0%, transparent 35%),
+                radial-gradient(circle at 100% 100%, rgba(0, 242, 255, 0.1) 0%, transparent 35%);
+            background-attachment: fixed;
         }
 
-        /* Ambient Glow Background */
-        body::before {
-            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 10% 20%, rgba(0, 242, 255, 0.05) 0%, transparent 40%),
-                        radial-gradient(circle at 90% 80%, rgba(255, 0, 229, 0.05) 0%, transparent 40%);
-            z-index: -1;
+        /* Scanline Effect */
+        body::after {
+            content: " ";
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 9999;
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
         }
 
-        /* --- STICKY HUD BARS --- */
+        /* --- NAV BARS --- */
         .top-bar {
             position: fixed; top: 0; width: 100%; height: 70px;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(0, 242, 255, 0.2);
+            background: rgba(5, 5, 8, 0.8); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center; z-index: 1000;
         }
-        .top-bar h2 { font-family: 'Orbitron'; font-size: 1.2rem; letter-spacing: 4px; color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+        .top-bar h2 { 
+            font-family: 'Orbitron'; font-size: 1rem; letter-spacing: 6px; 
+            color: var(--cyan); text-shadow: var(--glow); 
+            text-transform: uppercase;
+        }
 
         .bottom-bar {
-            position: fixed; bottom: 0; width: 100%; height: 75px;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(20px);
-            border-top: 2px solid var(--pink);
+            position: fixed; bottom: 20px; left: 5%; width: 90%; height: 65px;
+            background: rgba(10, 10, 15, 0.9); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: 20px;
             display: flex; align-items: center; justify-content: space-around; z-index: 1000;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
-        .container { width: 92%; max-width: 480px; margin: 0 auto; }
-        .page { display: none; animation: scaleUp 0.3s ease-out; }
+        .container { width: 90%; max-width: 450px; margin: 90px auto 110px; }
+        .page { display: none; animation: slideIn 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
         .active { display: block; }
-        @keyframes scaleUp { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-        /* --- COMPONENT STYLING --- */
-        .glass-card { 
-            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 24px; padding: 25px; margin-bottom: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        
+        @keyframes slideIn { 
+            from { opacity: 0; transform: translateY(20px); filter: blur(10px); } 
+            to { opacity: 1; transform: translateY(0); filter: blur(0); } 
         }
 
-        h1 { font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; text-align: center; margin-bottom: 25px; background: linear-gradient(to right, #fff, var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* --- CARDS & BUTTONS --- */
+        .glass-card { 
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 28px; padding: 25px; margin-bottom: 20px;
+            position: relative; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        .glass-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transition: 0.5s;
+        }
+        .glass-card:hover::before { left: 100%; }
+
+        h1 { 
+            font-family: 'Syncopate'; font-weight: 700; font-size: 1.4rem; 
+            text-align: center; margin-bottom: 30px; letter-spacing: 2px;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
 
         .btn-main { 
-            width: 100%; padding: 20px; background: var(--cyan); border: none; border-radius: 18px;
-            color: #000; font-family: 'Orbitron'; font-weight: 900; font-size: 1rem;
-            cursor: pointer; box-shadow: 0 0 20px rgba(0, 242, 255, 0.3); transition: 0.3s;
+            width: 100%; padding: 20px; border: none; border-radius: 18px;
+            background: linear-gradient(135deg, var(--cyan), #00a2ff);
+            color: #000; font-family: 'Orbitron'; font-weight: 900; 
+            font-size: 0.9rem; letter-spacing: 1px;
+            cursor: pointer; transition: 0.3s; box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
         }
-        .btn-main:active { transform: scale(0.96); }
+        .btn-main:active { transform: scale(0.95); filter: brightness(1.2); }
 
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px; }
         .btn-sub { 
-            background: rgba(255,255,255,0.03); border: 1px solid var(--pink); 
-            color: var(--pink); border-radius: 12px; padding: 12px; font-family: 'Orbitron'; font-weight: 700; font-size: 0.75rem; 
+            background: rgba(255, 0, 229, 0.05); border: 1px solid var(--pink); 
+            color: var(--pink); border-radius: 15px; padding: 15px 5px; 
+            font-family: 'Orbitron'; font-weight: 700; font-size: 0.65rem; transition: 0.2s;
         }
+        .btn-sub:active { background: var(--pink); color: white; }
 
         /* --- INPUTS --- */
         input, textarea { 
-            width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 15px;
-            background: rgba(0,0,0,0.4); border: 1px solid #333; color: white; outline: none;
+            width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 18px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); 
+            color: white; outline: none; font-size: 1rem; transition: 0.3s;
         }
-        input:focus { border-color: var(--cyan); }
+        input:focus { border-color: var(--cyan); background: rgba(0, 242, 255, 0.05); }
 
         /* --- UPDATES --- */
         .update-notif { 
-            background: rgba(255,255,255,0.03); border-radius: 15px; padding: 15px;
-            margin-bottom: 12px; border-left: 3px solid var(--cyan);
+            background: rgba(255,255,255,0.03); border-radius: 20px; padding: 20px;
+            margin-bottom: 15px; border-left: 4px solid var(--cyan); position: relative;
         }
-        .update-notif p { font-size: 0.9rem; color: #ddd; }
-        .update-time { font-size: 0.65rem; color: #555; margin-top: 8px; display: block; }
+        .update-notif p { font-size: 0.9rem; line-height: 1.5; color: #eee; }
+        .update-time { font-size: 0.7rem; color: #666; margin-top: 10px; display: block; font-family: 'Orbitron'; }
 
-        /* --- LISTS --- */
-        .event-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .status-chip { padding: 8px 16px; border-radius: 30px; font-size: 0.75rem; font-weight: 900; cursor: pointer; border: 1px solid #444; }
-        .chip-active { background: var(--cyan); color: #000; border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
+        /* --- EVENT ITEMS --- */
+        .event-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 18px; background: rgba(255,255,255,0.02);
+            border-radius: 18px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .status-chip { 
+            padding: 10px 20px; border-radius: 12px; font-size: 0.7rem; 
+            font-weight: 900; font-family: 'Orbitron'; cursor: pointer;
+            background: #111; color: #444; border: 1px solid #222; transition: 0.4s;
+        }
+        .chip-active { 
+            background: var(--cyan); color: #000; border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+        }
 
-        details { background: rgba(0,0,0,0.2); border-radius: 15px; padding: 12px; margin-bottom: 10px; }
-        summary { font-family: 'Orbitron'; font-size: 0.85rem; color: var(--cyan); cursor: pointer; outline: none; }
-        .player-list-item { font-size: 0.85rem; padding: 8px 0; color: #bbb; border-bottom: 1px solid #222; }
+        /* --- RANKINGS --- */
+        .rank-row { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px; background: linear-gradient(90deg, rgba(255,255,255,0.03), transparent); 
+            border-radius: 20px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .rank-number { font-family: 'Orbitron'; font-size: 1.2rem; font-weight: 900; width: 40px; }
+        .rank-1 { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
+        .rank-2 { color: #c0c0c0; }
+        .rank-3 { color: #cd7f32; }
 
-        .rank-row { display: flex; justify-content: space-between; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 8px; }
+        details { background: rgba(0,0,0,0.3); border-radius: 18px; padding: 5px 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        summary { padding: 15px 0; font-family: 'Orbitron'; font-size: 0.8rem; color: var(--cyan); cursor: pointer; }
+
+        .host-card {
+            margin-top: 30px; text-align: center; border: 1px dashed rgba(255, 255, 255, 0.1);
+            padding: 20px; border-radius: 20px;
+        }
     </style>
 </head>
 <body>
@@ -103,70 +169,79 @@
 
     <div class="container">
         <div id="loginPage" class="page">
-            <h1>IDENTITY</h1>
+            <h1 style="margin-top: 40px;">AUTHENTICATE</h1>
             <div class="glass-card">
                 <input type="text" id="realName" placeholder="Real Name">
-                <input type="text" id="nickName" placeholder="Nickname">
-                <button class="btn-main" onclick="registerUser()">START CAREER</button>
+                <input type="text" id="nickName" placeholder="Agent Nickname">
+                <button class="btn-main" onclick="registerUser()">INITIALIZE PROFILE</button>
             </div>
         </div>
 
         <div id="homePage" class="page">
             <h1>COMMAND HUB</h1>
-            <button class="btn-main" onclick="showPage('registerEventPage')">REGISTER EVENTS</button>
+            <button class="btn-main" onclick="showPage('registerEventPage')" style="height: 100px; font-size: 1.1rem; margin-bottom: 20px;">
+                ENTER ARENA
+            </button>
+            
             <div class="nav-grid">
-                <button class="btn-sub" onclick="showPage('infoPage')">INFO</button>
-                <button class="btn-sub" onclick="showPage('leaderboardPage')">RANK</button>
-                <button class="btn-sub" onclick="showPage('participantsPage')">LIST</button>
+                <button class="btn-sub" onclick="showPage('infoPage')">INTEL</button>
+                <button class="btn-sub" onclick="showPage('leaderboardPage')">RANKS</button>
+                <button class="btn-sub" onclick="showPage('participantsPage')">ROSTER</button>
             </div>
-            <div class="glass-card" style="margin-top:25px; text-align:center;">
-                <p style="font-size: 0.6rem; color: #555; letter-spacing: 2px;">HOSTED BY</p>
-                <p style="font-weight:700; font-size: 1.1rem;">Ishaan & Yuvraj</p>
+
+            <div class="host-card">
+                <p style="font-size: 0.6rem; color: #555; letter-spacing: 4px; margin-bottom: 5px;">DIRECTORS</p>
+                <p style="font-family: 'Orbitron'; font-weight: 700; font-size: 1rem; color: #fff;">ISHAAN <span style="color:var(--pink)">&</span> YUVRAJ</p>
             </div>
         </div>
 
         <div id="infoPage" class="page">
-            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:15px; font-size:0.8rem;">← RETURN</p>
-            <h1>INFO</h1>
+            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:20px; font-size:0.75rem; font-family:'Orbitron';"> < BACK</p>
+            <h1>SITUATION ROOM</h1>
             <div class="glass-card">
-                <h3 style="color:var(--pink); font-family:'Orbitron'; font-size:0.8rem; margin-bottom:15px;">LIVE FEED</h3>
+                <h3 style="color:var(--pink); font-family:'Orbitron'; font-size:0.7rem; margin-bottom:20px; letter-spacing:2px;">LIVE INTEL FEED</h3>
                 <div id="liveUpdates"></div>
                 
-                <div id="adminPanel" style="display:none; margin-top:20px; border-top:1px solid #222; padding-top:20px;">
-                    <textarea id="adminMsg" placeholder="New announcement..."></textarea>
-                    <button class="btn-main" style="padding:10px; font-size:0.8rem;" onclick="postUpdate()">POST UPDATE</button>
+                <div id="adminPanel" style="display:none; margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:20px;">
+                    <textarea id="adminMsg" placeholder="Transmit new message..."></textarea>
+                    <button class="btn-main" style="padding:15px; font-size:0.7rem;" onclick="postUpdate()">BROADCAST</button>
                 </div>
             </div>
-            <div class="glass-card">
-                <p style="font-size:0.85rem; color:#888;">Rules: +1 Point for Joining, +5 for Winning. Stay Honorable.</p>
+            <div class="glass-card" style="border: 1px solid rgba(255, 189, 57, 0.2);">
+                <p style="font-size:0.8rem; color:#aaa; line-height:1.6;">
+                    <b style="color:var(--gold)">PROTOCOLS:</b><br>
+                    • Registration: +1 Point<br>
+                    • Victory: +5 Points<br>
+                    • Conduct: Honorable
+                </p>
             </div>
         </div>
 
         <div id="leaderboardPage" class="page">
-            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:15px; font-size:0.8rem;">← RETURN</p>
-            <h1>RANKINGS</h1>
+            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:20px; font-size:0.75rem; font-family:'Orbitron';"> < BACK</p>
+            <h1>HALL OF FAME</h1>
             <div id="leaderboardBody"></div>
         </div>
 
         <div id="participantsPage" class="page">
-            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:15px; font-size:0.8rem;">← RETURN</p>
-            <h1>PLAYERS</h1>
+            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:20px; font-size:0.75rem; font-family:'Orbitron';"> < BACK</p>
+            <h1>UNIT ROSTER</h1>
             <div id="participantContent"></div>
         </div>
 
         <div id="registerEventPage" class="page">
-            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:15px; font-size:0.8rem;">← RETURN</p>
-            <h1 id="displayId">ID: #---</h1>
-            <div class="glass-card" id="eventList"></div>
+            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:20px; font-size:0.75rem; font-family:'Orbitron';"> < BACK</p>
+            <h1 id="displayId" style="font-size: 1rem; color: var(--cyan);">AGENT: #---</h1>
+            <div id="eventList"></div>
         </div>
     </div>
 
     <div class="bottom-bar">
-        <div style="display:flex; align-items:center; gap:8px;">
-            <div style="width:8px; height:8px; background:#0f0; border-radius:50%; box-shadow:0 0 10px #0f0;"></div>
-            <span id="footerUser" style="font-family:'Orbitron'; font-size:0.7rem;">OFFLINE</span>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div style="width:12px; height:4px; background:var(--cyan); border-radius:2px; margin-bottom:5px; box-shadow: 0 0 10px var(--cyan);"></div>
+            <span id="footerUser" style="font-family:'Orbitron'; font-size:0.6rem; letter-spacing:1px;">OFFLINE</span>
         </div>
-        <div id="footerID" style="color:var(--pink); font-family:'Orbitron'; font-size:0.7rem; font-weight:900;">#000</div>
+        <div id="footerID" style="color:var(--pink); font-family:'Orbitron'; font-size:0.8rem; font-weight:900; letter-spacing:2px;">#000</div>
     </div>
 
 <script type="module">
@@ -220,7 +295,7 @@
         if(!currentUser) return;
         document.getElementById('footerUser').innerText = currentUser.nickName.toUpperCase();
         document.getElementById('footerID').innerText = "#" + currentUser.id;
-        document.getElementById('displayId').innerText = "PLAYER: #" + currentUser.id;
+        document.getElementById('displayId').innerText = "AGENT: #" + currentUser.id;
         renderEvents();
     }
 
@@ -230,9 +305,9 @@
         EVENT_NAMES.forEach((name, i) => {
             const isPart = currentUser.events['e'+i];
             list.innerHTML += `<div class="event-item">
-                <span style="font-weight:600;">${name}</span>
+                <span style="font-weight:600; font-family:'Orbitron'; font-size:0.8rem;">${name}</span>
                 <div onclick="toggleEvent(${i})" class="status-chip ${isPart ? 'chip-active' : ''}">
-                    ${isPart ? 'JOINED' : 'JOIN'}
+                    ${isPart ? 'DEPLOYED' : 'JOIN'}
                 </div>
             </div>`;
         });
@@ -253,8 +328,8 @@
                 const isSage = currentUser && (currentUser.nickName === "SageGod" || currentUser.nickName === "Sagegod");
                 div.innerHTML += `<div class="update-notif">
                     <p>${data.msg}</p>
-                    <span class="update-time">${data.time ? data.time.toDate().toLocaleString() : 'Recent'}</span>
-                    ${isSage ? `<button onclick="deletePost('${d.id}')" style="background:none; border:none; color:red; font-size:0.6rem; margin-top:8px; cursor:pointer;">[REMOVE]</button>` : ''}
+                    <span class="update-time">${data.time ? data.time.toDate().toLocaleString() : 'Just Now'}</span>
+                    ${isSage ? `<button onclick="deletePost('${d.id}')" style="background:none; border:none; color:var(--pink); font-size:0.6rem; margin-top:10px; cursor:pointer; font-family:'Orbitron';">[ TERMINATE ]</button>` : ''}
                 </div>`;
             });
         });
@@ -266,16 +341,16 @@
         document.getElementById('adminMsg').value = '';
     };
 
-    window.deletePost = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "updates", id)); };
+    window.deletePost = async (id) => { if(confirm("Terminate Broadcast?")) await deleteDoc(doc(db, "updates", id)); };
 
     function loadParticipants() {
         onSnapshot(collection(db, "players"), (snap) => {
             let html = ''; const players = snap.docs.map(d => d.data());
             EVENT_NAMES.forEach((name, i) => {
                 const joined = players.filter(p => p.events['e'+i]);
-                html += `<details><summary>${name}</summary>
-                    <div style="padding-top:10px;">
-                    ${joined.length > 0 ? joined.map(p => `<div class="player-list-item">${p.nickName} <small style="color:#555">#${p.id}</small></div>`).join('') : 'No entries yet'}
+                html += `<details><summary>${name.toUpperCase()} (${joined.length})</summary>
+                    <div style="padding:10px 0;">
+                    ${joined.length > 0 ? joined.map(p => `<div style="font-size:0.8rem; padding:12px; background:rgba(255,255,255,0.03); border-radius:10px; margin-bottom:5px; display:flex; justify-content:space-between;"><span>${p.nickName}</span><span style="color:#555;">#${p.id}</span></div>`).join('') : '<div style="font-size:0.7rem; color:#444;">NO ACTIVE AGENTS</div>'}
                     </div></details>`;
             });
             document.getElementById('participantContent').innerHTML = html;
@@ -287,10 +362,13 @@
             let html = ''; let r = 1;
             snap.forEach(doc => {
                 const p = doc.data();
+                const rankClass = r <= 3 ? `rank-${r}` : '';
                 html += `<div class="rank-row">
-                    <span style="font-family:'Orbitron'; color:var(--cyan);">#${r}</span>
-                    <span style="font-weight:700;">${p.nickName}</span>
-                    <span style="color:var(--pink); font-weight:700;">${p.points} PT</span>
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <span class="rank-number ${rankClass}">0${r}</span>
+                        <span style="font-weight:600; font-size:0.9rem;">${p.nickName}</span>
+                    </div>
+                    <span style="color:var(--pink); font-family:'Orbitron'; font-weight:700; font-size:0.8rem;">${p.points} <small>XP</small></span>
                 </div>`;
                 r++;
             });

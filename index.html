@@ -104,7 +104,16 @@
             background: rgba(255,255,255,0.1);
         }
 
-        .update-box { border-left: 3px solid var(--primary); padding: 15px; background: rgba(255,255,255,0.02); border-radius: 0 12px 12px 0; margin-bottom: 12px; }
+        /* --- THE FIX FOR SPACING --- */
+        .update-box { 
+            border-left: 3px solid var(--primary); 
+            padding: 15px; 
+            background: rgba(255,255,255,0.02); 
+            border-radius: 0 12px 12px 0; 
+            margin-bottom: 12px; 
+            white-space: pre-wrap; /* This allows line breaks to show! */
+            word-wrap: break-word;
+        }
         
         details { background: rgba(255,255,255,0.02); border-radius: 16px; padding: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
         summary { font-weight: 600; font-size: 0.9rem; cursor: pointer; padding: 4px; }
@@ -152,7 +161,7 @@
                 <div id="liveUpdates"></div>
                 
                 <div id="adminPanel" style="display:none; margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:20px;">
-                    <textarea id="adminMsg" placeholder="Type announcement... (Emojis allowed)" style="height:100px; resize:none;"></textarea>
+                    <textarea id="adminMsg" placeholder="Type announcement... (Emojis & Next Lines allowed)" style="height:120px; resize:none;"></textarea>
                     <button class="btn-primary" style="padding:12px; font-size:0.8rem;" onclick="postUpdate()">Post Update 🚀</button>
                 </div>
             </div>
@@ -224,15 +233,13 @@
         const nName = document.getElementById('nickName').value.trim();
         if(!rName || !nName) return alert("Please fill in both names!");
 
-        // Unique Nickname Check
         const q = query(collection(db, "players"), where("nickName", "==", nName));
         const snap = await getDocs(q);
         if (!snap.empty) return alert("Nickname already taken!");
 
-        // SageGod Protection
         if(nName.toLowerCase() === "sagegod") {
             const p = prompt("Enter Admin Password:");
-            if(p !== "SET_YOUR_PASSWORD_HERE") return alert("Wrong Password!");
+            if(p !== "YOUR_SECRET_PASSWORD") return alert("Wrong Password!");
         }
 
         const all = await getDocs(collection(db, "players"));
@@ -279,7 +286,7 @@
             snap.forEach(d => {
                 const data = d.data();
                 div.innerHTML += `<div class="update-box">
-                    <p style="font-size:0.9rem; white-space: pre-wrap;">${data.msg}</p>
+                    <p style="font-size:0.9rem;">${data.msg}</p>
                     <small style="color:#64748b; font-size:0.7rem;">${data.time ? data.time.toDate().toLocaleTimeString() : 'Just now'}</small>
                 </div>`;
             });
@@ -291,6 +298,7 @@
         const msg = el.value.trim(); if(!msg) return;
         await addDoc(collection(db, "updates"), { msg: msg, time: serverTimestamp() });
         el.value = '';
+        alert("Broadcast sent successfully!");
     };
 
     function loadParticipants() {

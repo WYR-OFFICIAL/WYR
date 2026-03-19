@@ -195,7 +195,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, updateDoc, collection, onSnapshot, query, orderBy, getDocs, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, updateDoc, collection, onSnapshot, query, orderBy, getDocs, addDoc, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const EVENT_NAMES = ["Gaming Clash", "Speed Logic", "Mystery Task", "Skill Shot", "Final Showdown"];
     const firebaseConfig = {
@@ -218,7 +218,8 @@
         if(id === 'leaderboardPage') loadLeaderboard();
         if(id === 'infoPage') {
             loadUpdates();
-            if(currentUser && (currentUser.nickName.toLowerCase() === "sagegod")) {
+            // Secure Admin Panel Check
+            if(currentUser && currentUser.nickName.toLowerCase() === "sagegod") {
                 document.getElementById('adminPanel').style.display = 'block';
             }
         }
@@ -230,10 +231,31 @@
     window.registerUser = async () => {
         const rName = document.getElementById('realName').value.trim();
         const nName = document.getElementById('nickName').value.trim();
+        
         if(!rName || !nName) return alert("Please fill in both names!");
-        const snap = await getDocs(collection(db, "players"));
-        const id = (snap.size + 1).toString().padStart(3, '0'); 
+
+        // --- NEW SECURITY CHECK: NICKNAME UNIQUENESS ---
+        const playersRef = collection(db, "players");
+        const q = query(playersRef, where("nickName", "==", nName));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            return alert("This Nickname is already taken! Please choose another one.");
+        }
+
+        // Prevent unauthorized "SageGod" attempts
+        if (nName.toLowerCase() === "sagegod") {
+            const pass = prompt("Enter Admin Password to claim this identity:");
+            if (pass !== "your_secret_password") { // Change "your_secret_password" to something you choose
+                return alert("Access Denied. You are not SageGod.");
+            }
+        }
+        // --- END SECURITY CHECK ---
+
+        const allPlayers = await getDocs(playersRef);
+        const id = (allPlayers.size + 1).toString().padStart(3, '0'); 
         const user = { realName: rName, nickName: nName, id: id, points: 0, events: {e0:false, e1:false, e2:false, e3:false, e4:false} };
+        
         await setDoc(doc(db, "players", id), user);
         localStorage.setItem('wyr_user', JSON.stringify(user));
         currentUser = user;

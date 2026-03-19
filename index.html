@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WYR OLYMPICS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --cyan: #00f2ff; --pink: #ff00e5; 
+            --bg: #050508; --card-bg: rgba(20, 20, 25, 0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; background: var(--bg); color: white; 
+            overflow-x: hidden; min-height: 100vh; padding-top: 80px; padding-bottom: 90px;
+        }
+
+        /* Ambient Glow Background */
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(0, 242, 255, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 0, 229, 0.05) 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        /* --- STICKY HUD BARS --- */
+        .top-bar {
+            position: fixed; top: 0; width: 100%; height: 70px;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0, 242, 255, 0.2);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .top-bar h2 { font-family: 'Orbitron'; font-size: 1.2rem; letter-spacing: 4px; color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+
+        .bottom-bar {
+            position: fixed; bottom: 0; width: 100%; height: 75px;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(20px);
+            border-top: 2px solid var(--pink);
+            display: flex; align-items: center; justify-content: space-around; z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+
+        .container { width: 92%; max-width: 480px; margin: 0 auto; }
+        .page { display: none; animation: scaleUp 0.3s ease-out; }
+        .active { display: block; }
+        @keyframes scaleUp { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+        /* --- COMPONENT STYLING --- */
+        .glass-card { 
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px; padding: 25px; margin-bottom: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        h1 { font-family: 'Orbitron'; font-weight: 900; font-size: 1.8rem; text-align: center; margin-bottom: 25px; background: linear-gradient(to right, #fff, var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .btn-main { 
+            width: 100%; padding: 20px; background: var(--cyan); border: none; border-radius: 18px;
+            color: #000; font-family: 'Orbitron'; font-weight: 900; font-size: 1rem;
+            cursor: pointer; box-shadow: 0 0 20px rgba(0, 242, 255, 0.3); transition: 0.3s;
+        }
+        .btn-main:active { transform: scale(0.96); }
+
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .btn-sub { 
+            background: rgba(255,255,255,0.03); border: 1px solid var(--pink); 
+            color: var(--pink); border-radius: 12px; padding: 12px; font-family: 'Orbitron'; font-weight: 700; font-size: 0.75rem; 
+        }
+
+        /* --- INPUTS --- */
+        input, textarea { 
+            width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 15px;
+            background: rgba(0,0,0,0.4); border: 1px solid #333; color: white; outline: none;
+        }
+        input:focus { border-color: var(--cyan); }
+
+        /* --- UPDATES --- */
+        .update-notif { 
+            background: rgba(255,255,255,0.03); border-radius: 15px; padding: 15px;
+            margin-bottom: 12px; border-left: 3px solid var(--cyan);
+        }
+        .update-notif p { font-size: 0.9rem; color: #ddd; }
+        .update-time { font-size: 0.65rem; color: #555; margin-top: 8px; display: block; }
+
+        /* --- LISTS --- */
+        .event-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .status-chip { padding: 8px 16px; border-radius: 30px; font-size: 0.75rem; font-weight: 900; cursor: pointer; border: 1px solid #444; }
+        .chip-active { background: var(--cyan); color: #000; border-color: var(--cyan); box-shadow: 0 0 15px var(--cyan); }
+
+        details { background: rgba(0,0,0,0.2); border-radius: 15px; padding: 12px; margin-bottom: 10px; }
+        summary { font-family: 'Orbitron'; font-size: 0.85rem; color: var(--cyan); cursor: pointer; outline: none; }
+        .player-list-item { font-size: 0.85rem; padding: 8px 0; color: #bbb; border-bottom: 1px solid #222; }
+
+        .rank-row { display: flex; justify-content: space-between; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar"><h2>WYR OLYMPICS</h2></div>
+
+    <div class="container">
+        <div id="loginPage" class="page">
+            <h1>IDENTITY</h1>
+            <div class="glass-card">
+                <input type="text" id="realName" placeholder="Real Name">
+                <input type="text" id="nickName" placeholder="Nickname">
+                <button class="btn-main" onclick="registerUser()">START CAREER</button>
+            </div>
+        </div>
+
+        <div id="homePage" class="page">
+            <h1>COMMAND HUB</h1>
+            <button class="btn-main" onclick="showPage('registerEventPage')">REGISTER EVENTS</button>
+            <div class="nav-grid">
+                <button class="btn-sub" onclick="showPage('infoPage')">INFO</button>
+                <button class="btn-sub" onclick="showPage('leaderboardPage')">RANK</button>
+                <button class="btn-sub" onclick="showPage('participantsPage')">LIST</button>
+            </div>
+            <div class="glass-card" style="margin-top:25px; text-align:center;">
+                <p style="font-size: 0.6rem; color: #555; letter-spacing: 2px;">HOSTED BY</p>
+                <p style="font-weight:700; font-size: 1.1rem;">Ishaan & Yuvraj</p>
+            </div>
+        </div>
+
+        <div id="infoPage" class="page">
+            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:15px; font-size:0.8rem;">← RETURN</p>
+            <h1>INFO</h1>
+            <div class="glass-card">
+                <h3 style="color:var(--pink); font-family:'Orbitron'; font-size:0.8rem; margin-bottom:15px;">LIVE FEED</h3>
+                <div id="liveUpdates"></div>
+                
+                <div id="adminPanel" style="display:none; margin-top:20px; border-top:1px solid #222; padding-top:20px;">
+                    <textarea id="adminMsg" placeholder="New announcement..."></textarea>
+                    <button class="btn-main" style="padding:10px; font-size:0.8rem;" onclick="postUpdate()">POST UPDATE</button>
+                </div>
+            </div>
+            <div class="glass-card">
+                <p style="font-size:0.85rem; color:#888;">Rules: +1 Point for Joining, +5 for Winning. Stay Honorable.</p>
+            </div>
+        </div>
+
+        <div id="leaderboardPage" class="page">
+            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:15px; font-size:0.8rem;">← RETURN</p>
+            <h1>RANKINGS</h1>
+            <div id="leaderboardBody"></div>
+        </div>
+
+        <div id="participantsPage" class="page">
+            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:15px; font-size:0.8rem;">← RETURN</p>
+            <h1>PLAYERS</h1>
+            <div id="participantContent"></div>
+        </div>
+
+        <div id="registerEventPage" class="page">
+            <p onclick="showPage('homePage')" style="color:#555; cursor:pointer; margin-bottom:15px; font-size:0.8rem;">← RETURN</p>
+            <h1 id="displayId">ID: #---</h1>
+            <div class="glass-card" id="eventList"></div>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div style="display:flex; align-items:center; gap:8px;">
+            <div style="width:8px; height:8px; background:#0f0; border-radius:50%; box-shadow:0 0 10px #0f0;"></div>
+            <span id="footerUser" style="font-family:'Orbitron'; font-size:0.7rem;">OFFLINE</span>
+        </div>
+        <div id="footerID" style="color:var(--pink); font-family:'Orbitron'; font-size:0.7rem; font-weight:900;">#000</div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, updateDoc, collection, onSnapshot, query, orderBy, getDocs, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const EVENT_NAMES = ["Gaming Clash", "Speed Logic", "Mystery Task", "Skill Shot", "Final Showdown"];
+    const firebaseConfig = {
+        apiKey: "AIzaSyCz9cM7bUCAJnW2cr0qIZxaS60mWgRVAyM",
+        authDomain: "wyr-olympics.firebaseapp.com",
+        projectId: "wyr-olympics",
+        storageBucket: "wyr-olympics.firebasestorage.app",
+        messagingSenderId: "5860419843",
+        appId: "1:5860419843:web:45f65b48d42c36850ae136"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let currentUser = JSON.parse(localStorage.getItem('wyr_user')) || null;
+
+    window.showPage = (id) => {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'participantsPage') loadParticipants();
+        if(id === 'leaderboardPage') loadLeaderboard();
+        if(id === 'infoPage') {
+            loadUpdates();
+            if(currentUser && (currentUser.nickName === "SageGod" || currentUser.nickName === "Sagegod")) {
+                document.getElementById('adminPanel').style.display = 'block';
+            }
+        }
+        window.scrollTo(0,0);
+    };
+
+    if (currentUser) { showPage('homePage'); updateUI(); } else { showPage('loginPage'); }
+
+    window.registerUser = async () => {
+        const rName = document.getElementById('realName').value.trim();
+        const nName = document.getElementById('nickName').value.trim();
+        if(!rName || !nName) return alert("Identify yourself!");
+        const snap = await getDocs(collection(db, "players"));
+        const id = (snap.size + 1).toString().padStart(3, '0'); 
+        const user = { realName: rName, nickName: nName, id: id, points: 0, events: {e0:false, e1:false, e2:false, e3:false, e4:false} };
+        await setDoc(doc(db, "players", id), user);
+        localStorage.setItem('wyr_user', JSON.stringify(user));
+        currentUser = user;
+        showPage('homePage'); updateUI();
+    };
+
+    function updateUI() {
+        if(!currentUser) return;
+        document.getElementById('footerUser').innerText = currentUser.nickName.toUpperCase();
+        document.getElementById('footerID').innerText = "#" + currentUser.id;
+        document.getElementById('displayId').innerText = "PLAYER: #" + currentUser.id;
+        renderEvents();
+    }
+
+    function renderEvents() {
+        const list = document.getElementById('eventList');
+        if(!list) return; list.innerHTML = '';
+        EVENT_NAMES.forEach((name, i) => {
+            const isPart = currentUser.events['e'+i];
+            list.innerHTML += `<div class="event-item">
+                <span style="font-weight:600;">${name}</span>
+                <div onclick="toggleEvent(${i})" class="status-chip ${isPart ? 'chip-active' : ''}">
+                    ${isPart ? 'JOINED' : 'JOIN'}
+                </div>
+            </div>`;
+        });
+    }
+
+    window.toggleEvent = async (num) => {
+        const key = 'e' + num; const status = !currentUser.events[key];
+        currentUser.points += status ? 1 : -1; currentUser.events[key] = status;
+        await updateDoc(doc(db, "players", currentUser.id), { points: currentUser.points, [`events.${key}`]: status });
+        localStorage.setItem('wyr_user', JSON.stringify(currentUser)); renderEvents();
+    };
+
+    function loadUpdates() {
+        onSnapshot(query(collection(db, "updates"), orderBy("time", "desc")), (snap) => {
+            const div = document.getElementById('liveUpdates'); div.innerHTML = '';
+            snap.forEach(d => {
+                const data = d.data();
+                const isSage = currentUser && (currentUser.nickName === "SageGod" || currentUser.nickName === "Sagegod");
+                div.innerHTML += `<div class="update-notif">
+                    <p>${data.msg}</p>
+                    <span class="update-time">${data.time ? data.time.toDate().toLocaleString() : 'Recent'}</span>
+                    ${isSage ? `<button onclick="deletePost('${d.id}')" style="background:none; border:none; color:red; font-size:0.6rem; margin-top:8px; cursor:pointer;">[REMOVE]</button>` : ''}
+                </div>`;
+            });
+        });
+    }
+
+    window.postUpdate = async () => {
+        const msg = document.getElementById('adminMsg').value; if(!msg) return;
+        await addDoc(collection(db, "updates"), { msg: msg, time: serverTimestamp() });
+        document.getElementById('adminMsg').value = '';
+    };
+
+    window.deletePost = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "updates", id)); };
+
+    function loadParticipants() {
+        onSnapshot(collection(db, "players"), (snap) => {
+            let html = ''; const players = snap.docs.map(d => d.data());
+            EVENT_NAMES.forEach((name, i) => {
+                const joined = players.filter(p => p.events['e'+i]);
+                html += `<details><summary>${name}</summary>
+                    <div style="padding-top:10px;">
+                    ${joined.length > 0 ? joined.map(p => `<div class="player-list-item">${p.nickName} <small style="color:#555">#${p.id}</small></div>`).join('') : 'No entries yet'}
+                    </div></details>`;
+            });
+            document.getElementById('participantContent').innerHTML = html;
+        });
+    }
+
+    function loadLeaderboard() {
+        onSnapshot(query(collection(db, "players"), orderBy("points", "desc")), (snap) => {
+            let html = ''; let r = 1;
+            snap.forEach(doc => {
+                const p = doc.data();
+                html += `<div class="rank-row">
+                    <span style="font-family:'Orbitron'; color:var(--cyan);">#${r}</span>
+                    <span style="font-weight:700;">${p.nickName}</span>
+                    <span style="color:var(--pink); font-weight:700;">${p.points} PT</span>
+                </div>`;
+                r++;
+            });
+            document.getElementById('leaderboardBody').innerHTML = html;
+        });
+    }
+</script>
+</body>
+</html>
